@@ -1,0 +1,15 @@
+cargo install watch
+cargo install diesel
+diesel setup ???
+diesel migration run
+diesel migration redo
+cargo watch -x run
+
+docker pull postgres:9.6-bullseye && 
+docker run --rm \
+--name rust_blogpost_auth_async \
+--publish 127.0.0.1:5432:5432 \
+-e POSTGRES_USER=user \
+-e POSTGRES_PASSWORD=1234 \
+-e POSTGRES_DB=rust_blogpost_auth_async \
+-d postgres:9.6-bullseye

@@ -4,18 +4,27 @@ extern crate diesel;
 use actix_web::{App, HttpServer};
 use dotenv::dotenv;
 
+use crate::handlers as routes;
+use crate::utils::socket;
+
+mod services;
 mod handlers;
 mod models;
-mod utils;
 mod schema;
+mod utils;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
-    // Start http server
-    HttpServer::new(|| App::new().service(handlers::get_users))
-        .bind(utils::get_socket())?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(routes::add_user)
+            .service(routes::delete_user)
+            .service(routes::get_users)
+            .service(routes::get_user_by_id)
+    })
+    .bind(socket::get_instance())?
+    .run()
+    .await
 }

@@ -4,5 +4,5 @@ CREATE TABLE users (
   last_name TEXT NOT NULL,
   email TEXT NOT NULL,
   alias TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

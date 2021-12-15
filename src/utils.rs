@@ -22,22 +22,24 @@ pub mod db {
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
         PgConnection::establish(&database_url)
-            .expect(&format!("Error connecting to {}", database_url))
+            .expect(super::logs::error(&("Error connecting to {}", database_url)))
     }
 }
 
 pub mod logs {
   use std::fmt::Debug;
 
-  pub fn info<T: Debug>(val: &T)-> () {
+  pub fn info<T: Debug>(val: &T)-> &str {
     println!("{}\n", "*".repeat(75));
     println!("{:#?}", val);
     println!("\n{}", "*".repeat(75));
+    ""
   }
 
-  pub fn error<T: Debug>(val: &T) -> () {
+  pub fn error<T: Debug>(val: &T) -> &str {
     println!("{}\n", "X".repeat(75));
     println!("{:#?}", val);
     println!("\n{}", "X".repeat(75));
+    ""
   }
 }

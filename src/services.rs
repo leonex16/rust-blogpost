@@ -26,7 +26,7 @@ pub fn add_user(user: String) -> Resp<bool> {
 
       Resp::<bool> {
         status: Status::SUCCESS,
-        data: true,
+        data: Some(true),
         message: String::from("Usuario Creado")
       }
     },
@@ -35,7 +35,7 @@ pub fn add_user(user: String) -> Resp<bool> {
 
       Resp::<bool> {
         status: Status::ERROR,
-        data: false,
+        data: None,
         message: String::from("Ups, Tenemos Algunos Problemas.")
       }
     },
@@ -52,7 +52,7 @@ pub fn get_users() -> Resp::<Vec<(Users, Option<Notes>)>> {
   match users {
     Ok(users) => Resp::<Vec<(Users, Option<Notes>)>> {
       status: Status::SUCCESS,
-      data: users,
+      data: Some(users),
       message: String::from("")
     },
     Err(e) => {
@@ -60,9 +60,33 @@ pub fn get_users() -> Resp::<Vec<(Users, Option<Notes>)>> {
 
       Resp::<Vec<(Users, Option<Notes>)>> {
         status: Status::ERROR,
-        data: Vec::new(),
+        data: None,
         message: String::from("Ups, Tenemos Algunos Problemas.")
       }
     },
   }
+}
+
+pub fn get_user(id: i32) -> Resp::<(Users, Option<Notes>)> {
+  let conn = db::get_instance();
+  let user = users::table.find(id).left_join(notes::table).first::<(Users, Option<Notes>)>(&conn);
+
+  match user {
+    Ok(user) => {
+      Resp::<(Users, Option<Notes>)>{
+        status: Status::SUCCESS,
+        data: Some(user),
+        message: String::from("")
+      }
+    },
+    Err(e) => {
+      logs::error(&("ERROR ON GET_USER:", e));
+      Resp::<(Users, Option<Notes>)> {
+        status: Status::ERROR,
+        data: None,
+        message: String::from("Ups, Tenemos Algunos Problemas.")
+      }
+    },
+  }
+
 }

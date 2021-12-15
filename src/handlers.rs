@@ -19,8 +19,10 @@
   }
   
   #[get("/users/{id}")]
-  pub async fn get_user_by_id() -> impl Responder {
-    format!("hello from get users by id")
+  pub async fn get_user_by_id(web::Path(id): web::Path<i32>) -> Result<impl Responder> {
+    let resp: Resp::<(Users, Option<Notes>)> = services::get_user(id);
+
+    Ok(web::Json(resp))
   }
   
   #[delete("/users/{id}")]

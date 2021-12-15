@@ -17,6 +17,6 @@ pub enum Status {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Resp<T> {
   pub status: Status,
-  pub data: T,
+  pub data: Option<T>,
   pub message: String
 }

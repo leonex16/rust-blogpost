@@ -1,49 +1,68 @@
 use diesel::prelude::*;
-use serde::{Deserialize, Serialize};
 
+use crate::interfaces::*;
 use crate::schema::{users, notes};
 use crate::models::{Users, Notes, NewUser};
-use crate::utils::db;
+use crate::utils::{db, logs};
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct InputUser {
-  pub first_name: String,
-  pub last_name: String,
-  pub email: String,
-  pub alias: String,
-}
-
-pub fn add_user(user: String) -> (){
+pub fn add_user(user: String) -> Resp<bool> {
   let conn = db::get_instance();
-  let inputUser: Result<InputUser, serde_json::Error> = serde_json::from_str(&user);
+  let input_user: Result<InputUser, serde_json::Error> = serde_json::from_str(&user);
 
-  match inputUser {
+  match input_user {
     Ok(user) => {
       let InputUser { first_name, last_name, email, alias } = user;
       let new_user = NewUser {
-        first_name: &first_name,
-        last_name: &last_name,
-        email: &email,
-        alias: &alias,
+        first_name: &first_name.trim().to_uppercase(),
+        last_name: &last_name.trim().to_uppercase(),
+        email: &email.trim().to_uppercase(),
+        alias: &alias.trim().to_uppercase(),
       };
-      // diesel::insert_into(users::table)
-      //   .values(&new_user)
-      //   .execute(&conn)
-      //   .expect("Error saving new user");
+
+      diesel::insert_into(users::table)
+        .values(&new_user)
+        .execute(&conn)
+        .expect("ERROR ON ADD_USER");
+
+      Resp::<bool> {
+        status: Status::SUCCESS,
+        data: true,
+        message: String::from("Usuario Creado")
+      }
     },
-    Err(e) => println!("ERROR ON ADD_USER: {}", e),
+    Err(e) => {
+      logs::error(&("ERROR ON ADD_USER:", e));
+
+      Resp::<bool> {
+        status: Status::ERROR,
+        data: false,
+        message: String::from("Ups, Tenemos Algunos Problemas.")
+      }
+    },
   }
 
 }
 
-pub fn get_users() -> Vec<(Users, Option<Notes>)> {
+pub fn get_users() -> Resp::<Vec<(Users, Option<Notes>)>> {
   let conn = db::get_instance();
-  let results = users::table
+  let users = users::table
   .left_join(notes::table)
   .load::<(Users, Option<Notes>)>(&conn);
 
-  match results {
-    Ok(results) => results,
-    Err(err) => panic!("ERROR ON GET_USERS: {}", err),
+  match users {
+    Ok(users) => Resp::<Vec<(Users, Option<Notes>)>> {
+      status: Status::SUCCESS,
+      data: users,
+      message: String::from("")
+    },
+    Err(e) => {
+      logs::error(&("ERROR ON GET_USERS:", e));
+
+      Resp::<Vec<(Users, Option<Notes>)>> {
+        status: Status::ERROR,
+        data: Vec::new(),
+        message: String::from("Ups, Tenemos Algunos Problemas.")
+      }
+    },
   }
 }

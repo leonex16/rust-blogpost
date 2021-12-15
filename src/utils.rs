@@ -25,3 +25,19 @@ pub mod db {
             .expect(&format!("Error connecting to {}", database_url))
     }
 }
+
+pub mod logs {
+  use std::fmt::Debug;
+
+  pub fn info<T: Debug>(val: &T)-> () {
+    println!("{}\n", "*".repeat(75));
+    println!("{:#?}", val);
+    println!("\n{}", "*".repeat(75));
+  }
+
+  pub fn error<T: Debug>(val: &T) -> () {
+    println!("{}\n", "X".repeat(75));
+    println!("{:#?}", val);
+    println!("\n{}", "X".repeat(75));
+  }
+}

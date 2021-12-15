@@ -12,6 +12,7 @@ mod handlers;
 mod models;
 mod schema;
 mod utils;
+mod interfaces;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

@@ -20,12 +20,14 @@
   
   #[get("/users/{id}")]
   pub async fn get_user_by_id(web::Path(id): web::Path<i32>) -> Result<impl Responder> {
-    let resp: Resp::<(Users, Option<Notes>)> = services::get_user(id);
+    let resp: Resp::<(Users, Option<Notes>)> = services::get_user_by_id(id);
 
     Ok(web::Json(resp))
   }
   
   #[delete("/users/{id}")]
-  pub async fn delete_user() -> impl Responder {
-    format!("hello from delete user")
+  pub async fn delete_user(web::Path(id): web::Path<i32>) -> Result<impl Responder> {
+    let resp: Resp::<bool> = services::delete_user_by_id(id);
+
+    Ok(web::Json(resp))
   }

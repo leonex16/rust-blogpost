@@ -18,5 +18,18 @@ pub enum Status {
 pub struct Resp<T> {
   pub status: Status,
   pub data: Option<T>,
-  pub message: String
+  pub message: Option<String>
 }
+
+// TODO: Someday implement this
+// impl<T> Resp<T> {
+//   pub fn new(resp: Resp<T>) -> Resp<T> {
+//     let Resp { status, data, message} = resp;
+//     Resp { status, data, message}
+//   }
+
+//   pub fn get(self) -> Resp<T> {
+//     let Resp { status, data, message} = self;
+//     Resp::<T> { status, data, message}
+//   }
+// }

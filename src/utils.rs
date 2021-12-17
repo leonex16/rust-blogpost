@@ -22,7 +22,7 @@ pub mod db {
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
         PgConnection::establish(&database_url)
-            .expect(super::logs::error(&("Error connecting to {}", database_url)))
+            .expect("Error connecting to DB")
     }
 }
 

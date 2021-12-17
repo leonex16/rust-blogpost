@@ -1,6 +1,6 @@
 cargo install watch
 cargo install diesel_cli --no-default-features --features postgres
-diesel setup ???
+diesel setup (if do not exist diesel.toml file)
 diesel migration run
 diesel migration redo
 cargo watch -x run

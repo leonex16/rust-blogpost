@@ -13,13 +13,11 @@ mod models;
 mod schema;
 mod utils;
 mod interfaces;
-mod errors;
-mod auth;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
-
+    
     HttpServer::new(|| {
         App::new()
             .service(routes::add_user)
